@@ -2,7 +2,6 @@
 
 import { Object3D, Vector3, Euler } from "three"
 import { Map } from "mapbox-gl"
-import { NumericLiteral } from "typescript";
 import { FeatureCollection, Point } from "geojson"
 
 export class Threebox {
