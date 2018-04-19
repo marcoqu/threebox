@@ -3,6 +3,7 @@
   "version": "0.1.5",
   "description": "A Mapbox GL JS plugin that combines the power of the Three.js 3D library with Mapbox geospatial tools.",
   "main": "main.js",
+  "types": "main.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/peterqliu/threebox.git"
@@ -12,10 +13,6 @@
   "bugs": {
     "url": "https://github.com/peterqliu/threebox/issues"
   },
-  "dev-dependencies": {
-    "tap-prettify": "0.0.2",
-    "tape": "^4.6.3"
-  },
   "scripts": {
     "build": "browserify exports.js > dist/threebox.js",
     "dev": "watchify exports.js --verbose -o dist/threebox.js",
@@ -23,5 +20,13 @@
   },
   "dependencies": {
     "three": "^0.89.0"
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.2",
+    "@types/mapbox-gl": "^0.44.2",
+    "@types/three": "^0.91.8",
+    "browserify": "^16.2.0",
+    "tap-prettify": "0.0.2",
+    "tape": "^4.6.3"
   }
 }
