@@ -1,10 +1,12 @@
 /** Declaration file by @marcoqu */
 
-import { Object3D, Vector3, Euler } from "three"
+import { Object3D, Vector3, Euler, WebGLRenderer } from "three"
 import { Map } from "mapbox-gl"
 import { FeatureCollection, Point } from "geojson"
 
 export class Threebox {
+    renderer: WebGLRenderer
+    map: Map
     constructor(map: Map);
 
     addAtCoordinate(obj: Object3D, lnglat: Threebox.Coords, options: Threebox.PositionOptions): Object3D;
@@ -32,6 +34,7 @@ export class Threebox {
     unprojectFromWorld(pixel: Vector3): Threebox.Coords;
 
     update(timestamp?: number): void;
+    updateOnce(): void;
 
 }
 

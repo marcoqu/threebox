@@ -1,8 +1,7 @@
-var THREE = require("three");    // Modified version to use 64-bit double precision floats for matrix math
+var THREE = require("three");
 var ThreeboxConstants = require("./constants.js");
 var CameraSync = require("./Camera/CameraSync.js");
 var utils = require("./Utils/Utils.js");
-//var AnimationManager = require("./Animation/AnimationManager.js");
 var SymbolLayer3D = require("./Layers/SymbolLayer3D.js");
 
 function Threebox(map){
@@ -34,18 +33,16 @@ function Threebox(map){
     this.world = new THREE.Group();
     this.scene.add(this.world);
     this.cameraSynchronizer = new CameraSync(this.map, this.camera, this.world);
-
-    //this.animationManager = new AnimationManager();
-    this.update();
 }
 
 Threebox.prototype = {
     SymbolLayer3D: SymbolLayer3D,
 
-    update: function(timestamp) {
-        // Update any animations
-        //this.animationManager.update(timestamp);
+    updateOnce: function() {
+        this.renderer.render( this.scene, this.camera );
+    },
 
+    update: function(timestamp) {
         // Render the scene
         this.renderer.render( this.scene, this.camera );
 
@@ -117,10 +114,6 @@ Threebox.prototype = {
         this._flipMaterialSides(obj);
         this.world.add(geoGroup);
         this.moveToCoordinate(obj, lnglat, options);
-
-        // Bestow this mesh with animation superpowers and keeps track of its movements in the global animation queue
-        //this.animationManager.enroll(obj);
-
         return obj;
     },
     moveToCoordinate: function(obj, lnglat, options) {
@@ -164,13 +157,6 @@ Threebox.prototype = {
         return obj;
     },
 
-    addGeoreferencedMesh: function(mesh, options) {
-        /* Place the mesh on the map, assuming its internal (x,y) coordinates are already in (longitude, latitude) format
-            TODO: write this
-        */
-
-    },
-
     addSymbolLayer: function(options) {
         const layer = new SymbolLayer3D(this, options);
         this.layers.push(layer);
@@ -195,21 +181,6 @@ Threebox.prototype = {
         sunlight.position.set(0,800,1000);
         sunlight.matrixWorldNeedsUpdate = true;
         this.world.add(sunlight);
-        //this.world.add(sunlight.target);
-
-        // var lights = [];
-        // lights[ 0 ] = new THREE.PointLight( 0x999999, 1, 0 );
-        // lights[ 1 ] = new THREE.PointLight( 0x999999, 1, 0 );
-        // lights[ 2 ] = new THREE.PointLight( 0x999999, 0.2, 0 );
-
-        // lights[ 0 ].position.set( 0, 200, 1000 );
-        // lights[ 1 ].position.set( 100, 200, 1000 );
-        // lights[ 2 ].position.set( -100, -200, 0 );
-
-        // //scene.add( lights[ 0 ] );
-        // this.scene.add( lights[ 1 ] );
-        // this.scene.add( lights[ 2 ] );
-
     }
 }
 
