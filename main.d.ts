@@ -35,6 +35,8 @@ export class Threebox {
 
     update(timestamp?: number): void;
     updateOnce(): void;
+    syncCamera(): void;
+    render(): void;
 
 }
 

@@ -10,15 +10,15 @@ function CameraSync(map, camera, world) {
 
     this.camera.matrixAutoUpdate = false;   // We're in charge of the camera now!
 
-    // Postion and configure the world group so we can scale it appropriately when the camera zooms
+    // Position and configure the world group so we can scale it appropriately when the camera zooms
     this.world = world || new THREE.Group();
     this.world.position.x = this.world.position.y = ThreeboxConstants.WORLD_SIZE/2
     this.world.matrixAutoUpdate = false;
 
     // Listen for move events from the map and update the Three.js camera
-    var _this = this;
-    this.map.on('move', function() { _this.updateCamera(); });
-    this.updateCamera();
+    // var _this = this;
+    // this.map.on('move', function() { _this.updateCamera(); });
+    // this.updateCamera();
 }
 
 CameraSync.prototype = {
@@ -66,7 +66,7 @@ CameraSync.prototype = {
         var translateMap = new THREE.Matrix4;
         var rotateMap = new THREE.Matrix4;
 
-        scale.makeScale(zoomPow, zoomPow , zoomPow );
+        scale.makeScale(zoomPow, zoomPow, zoomPow);
         translateCenter.makeTranslation(ThreeboxConstants.WORLD_SIZE/2, -ThreeboxConstants.WORLD_SIZE / 2, 0);
         translateMap.makeTranslation(-this.map.transform.x, this.map.transform.y , 0);
         rotateMap.makeRotationZ(Math.PI);
@@ -76,7 +76,6 @@ CameraSync.prototype = {
             .premultiply(translateCenter)
             .premultiply(scale)
             .premultiply(translateMap)
-
 
         // utils.prettyPrintMatrix(this.camera.projectionMatrix.elements);
     }

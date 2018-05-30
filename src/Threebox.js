@@ -7,6 +7,7 @@ var SymbolLayer3D = require("./Layers/SymbolLayer3D.js");
 function Threebox(map){
     if (!THREE) throw 'no threejs found. Run `npm i three --save`'
     this.map = map;
+
     // Set up a THREE.js scene
     this.renderer = new THREE.WebGLRenderer( { alpha: true, antialias:true} );
     this.renderer.setSize( this.map.transform.width, this.map.transform.height );
@@ -20,7 +21,6 @@ function Threebox(map){
 
     var _this = this;
     this.map.on("resize", function() { _this.renderer.setSize(_this.map.transform.width, _this.map.transform.height); } );
-
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 28, window.innerWidth / window.innerHeight, 0.000001, 5000000000);
@@ -38,13 +38,22 @@ function Threebox(map){
 Threebox.prototype = {
     SymbolLayer3D: SymbolLayer3D,
 
+    render: function() {
+        this.renderer.render(this.scene, this.camera);
+    },
+
+    syncCamera: function() {
+        this.cameraSynchronizer.updateCamera();
+    },
+    
     updateOnce: function() {
-        this.renderer.render( this.scene, this.camera );
+        this.syncCamera();
+        this.render();
     },
 
     update: function(timestamp) {
         // Render the scene
-        this.renderer.render( this.scene, this.camera );
+        this.updateOnce();
 
         // Run this again next frame
         var thisthis = this;
@@ -68,9 +77,11 @@ Threebox.prototype = {
 
         return result;
     },
+
     projectedUnitsPerMeter: function(latitude) {
         return Math.abs(ThreeboxConstants.WORLD_SIZE * (1 / Math.cos(latitude*Math.PI/180))/ThreeboxConstants.EARTH_CIRCUMFERENCE);
     },
+
     _scaleVerticesToMeters: function(centerLatLng, vertices) {
         var pixelsPerMeter = this.projectedUnitsPerMeter(centerLatLng[1]);
         var centerProjected = this.projectToWorld(centerLatLng);
@@ -80,12 +91,6 @@ Threebox.prototype = {
         }
 
         return vertices;
-    },
-    projectToScreen: function(coords) {
-        console.log("WARNING: Projecting to screen coordinates is not yet implemented");
-    },
-    unprojectFromScreen: function (pixel) {
-        console.log("WARNING: unproject is not yet implemented");
     },
     unprojectFromWorld: function (pixel) {
 
@@ -99,12 +104,7 @@ Threebox.prototype = {
         //z dimension
         var height = pixel.z || 0;
         unprojected.push( height / pixelsPerMeter );
-
         return unprojected;
-    },
-
-    _flipMaterialSides: function(obj) {
-
     },
 
     addAtCoordinate: function(obj, lnglat, options) {
@@ -116,6 +116,7 @@ Threebox.prototype = {
         this.moveToCoordinate(obj, lnglat, options);
         return obj;
     },
+
     moveToCoordinate: function(obj, lnglat, options) {
         /** Place the given object on the map, centered around the provided longitude and latitude
             The object's internal coordinates are assumed to be in meter-offset format, meaning
@@ -160,7 +161,6 @@ Threebox.prototype = {
     addSymbolLayer: function(options) {
         const layer = new SymbolLayer3D(this, options);
         this.layers.push(layer);
-
         return layer;
     },
 
