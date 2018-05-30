@@ -111,7 +111,6 @@ Threebox.prototype = {
         var geoGroup = new THREE.Group();
         geoGroup.userData.isGeoGroup = true;
         geoGroup.add(obj);
-        this._flipMaterialSides(obj);
         this.world.add(geoGroup);
         this.moveToCoordinate(obj, lnglat, options);
         return obj;
