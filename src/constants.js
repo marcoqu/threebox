@@ -1,12 +1,8 @@
-const WORLD_SIZE = 512;
-const MERCATOR_A = 6378137.0;
-
-module.exports = exports = {
-    WORLD_SIZE: WORLD_SIZE,
-    PROJECTION_WORLD_SIZE: WORLD_SIZE / (MERCATOR_A * Math.PI) / 2,
-    MERCATOR_A: MERCATOR_A, // 900913 projection property
-    DEG2RAD: Math.PI / 180,
-    RAD2DEG: 180 / Math.PI,
-    EARTH_CIRCUMFERENCE: 40075000, // In meters
-
-}
+export const WORLD_SIZE = 512;
+export const MERCATOR_A = 6378137.0; // 900913 projection property
+export const PROJECTION_WORLD_SIZE = WORLD_SIZE / (MERCATOR_A * Math.PI) / 2;
+export const DEG2RAD = Math.PI / 180;
+export const RAD2DEG = 180 / Math.PI;
+export const EARTH_CIRCUMFERENCE = 40075000; // In meters
+export const CAMERA_NEAR = 0.000001;
+export const CAMERA_FAR = 5000000000;
