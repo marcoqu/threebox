@@ -17,7 +17,6 @@ export default class Threebox {
     constructor(map: PrivateMap) {
         this._map = map;
 
-        // Set up a THREE.js scene
         this._renderer = new WebGLRenderer({ alpha: true, antialias: true });
         this._renderer.setSize(this._map.transform.width, this._map.transform.height);
         this._renderer.shadowMap.enabled = true;
@@ -30,15 +29,14 @@ export default class Threebox {
         this._map.getCanvasContainer().appendChild(this._canvas);
         this._map.on('resize', () => this._onMapResize());
 
-        this._scene = new Scene();
-
         this._world = new Group();
         this._world.position.x = this._world.position.y = Projection.WORLD_SIZE / 2;
         this._world.matrixAutoUpdate = false;
 
         this._camera = new PerspectiveCamera();
-        this._camera.matrixAutoUpdate = false; // We're in charge of the camera now!
+        this._camera.matrixAutoUpdate = false;
 
+        this._scene = new Scene();
         this._scene.add(this._world);
     }
 
@@ -79,7 +77,7 @@ export default class Threebox {
         this._world.add(sunlight);
     }
 
-    private _updateCamera() {
+    private _updateCamera(): void {
         // Build a projection matrix, paralleling the code found in Mapbox GL JS
         const halfFov = CAMERA_FOV / 2;
         const cameraToCenterDistance = 0.5 / Math.tan(halfFov) * this._map.transform.height;

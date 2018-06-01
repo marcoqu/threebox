@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git+https://github.com/marcoqu/threebox.git"
   },
-  "author": "@peterqliu and @kronick and @marcoqu",
+  "author": "@peterqliu and @kronick. @marcoqu refactoring and conversion to Typescript",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/marcoqu/threebox/issues"
