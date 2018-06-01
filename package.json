@@ -11,20 +11,19 @@
   "bugs": {
     "url": "https://github.com/marcoqu/threebox/issues"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/Threebox.js",
+  "types": "dist/Threebox.d.ts",
   "scripts": {
     "build": "tsc"
   },
   "dependencies": {
-    "mapbox-gl": "^0.45.0",
-    "three": "^0.89.0"
+    "mapbox-gl": "^0.45.0"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.2",
     "@types/mapbox-gl": "^0.44.4",
     "@types/three": "^0.91.14",
-    "three": "^0.93.0",
+    "three": "^0.89.0",
     "typescript": "^2.9.1"
   }
 }
