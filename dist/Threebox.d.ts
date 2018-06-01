@@ -4,7 +4,7 @@ export declare type PrivateMap = Map & {
     transform: any;
 };
 export { Projection } from "./Projection";
-export default class Threebox {
+export declare class Threebox {
     private _camera;
     private _map;
     private _renderer;
@@ -16,7 +16,7 @@ export default class Threebox {
     syncCamera(): void;
     updateOnce(): void;
     update(timestamp: number): void;
-    addAtCoordinate(obj: Object3D, lnglat: number[]): Object3D;
+    addAtCoordinate(obj: Object3D, lnglat?: number[]): Object3D;
     remove(obj: Object3D): void;
     setupDefaultLights(): void;
     private _updateCamera;

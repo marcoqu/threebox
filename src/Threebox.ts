@@ -5,7 +5,7 @@ import { Projection } from './Projection';
 export type PrivateMap = Map & { transform: any };
 export { Projection } from "./Projection";
 
-export default class Threebox {
+export class Threebox {
 
     private _camera: PerspectiveCamera;
     private _map: PrivateMap;
@@ -58,7 +58,7 @@ export default class Threebox {
         window.requestAnimationFrame((timestamp) => this.update(timestamp));
     }
 
-    public addAtCoordinate(obj: Object3D, lnglat: number[]) {
+    public addAtCoordinate(obj: Object3D, lnglat: number[] = [0, 0, 0]) {
         this._world.add(obj);
         obj.position.copy(Projection.projectToWorld(lnglat));
         return obj;

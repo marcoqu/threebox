@@ -7,7 +7,6 @@ exports.Projection = Projection_2.Projection;
 class Threebox {
     constructor(map) {
         this._map = map;
-        // Set up a THREE.js scene
         this._renderer = new three_1.WebGLRenderer({ alpha: true, antialias: true });
         this._renderer.setSize(this._map.transform.width, this._map.transform.height);
         this._renderer.shadowMap.enabled = true;
@@ -17,12 +16,12 @@ class Threebox {
         this._canvas.style.zIndex = (+(this._map.getCanvas().style.zIndex || 0) + 1).toString();
         this._map.getCanvasContainer().appendChild(this._canvas);
         this._map.on('resize', () => this._onMapResize());
-        this._scene = new three_1.Scene();
         this._world = new three_1.Group();
         this._world.position.x = this._world.position.y = Projection_1.Projection.WORLD_SIZE / 2;
         this._world.matrixAutoUpdate = false;
         this._camera = new three_1.PerspectiveCamera();
-        this._camera.matrixAutoUpdate = false; // We're in charge of the camera now!
+        this._camera.matrixAutoUpdate = false;
+        this._scene = new three_1.Scene();
         this._scene.add(this._world);
     }
     render() {
@@ -39,7 +38,7 @@ class Threebox {
         this.updateOnce();
         window.requestAnimationFrame((timestamp) => this.update(timestamp));
     }
-    addAtCoordinate(obj, lnglat) {
+    addAtCoordinate(obj, lnglat = [0, 0, 0]) {
         this._world.add(obj);
         obj.position.copy(Projection_1.Projection.projectToWorld(lnglat));
         return obj;
@@ -116,5 +115,5 @@ class Threebox {
         this._renderer.setSize(this._map.transform.width, this._map.transform.height);
     }
 }
-exports.default = Threebox;
+exports.Threebox = Threebox;
 const CAMERA_FOV = 0.6435011087932844;
