@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-        "target": "ES2017",
-        "checkJs": true
-    },
-    "include": [
-        "src/**/*"
-    ]
-}

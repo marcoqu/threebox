@@ -2,37 +2,29 @@
   "name": "threebox",
   "version": "0.1.7",
   "description": "A Mapbox GL JS plugin that combines the power of the Three.js 3D library with Mapbox geospatial tools.",
-  "main": "main.js",
-  "types": "main.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/peterqliu/threebox.git"
+    "url": "git+https://github.com/marcoqu/threebox.git"
   },
-  "author": "@peterqliu and @kronick",
+  "author": "@peterqliu and @kronick and @marcoqu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/peterqliu/threebox/issues"
+    "url": "https://github.com/marcoqu/threebox/issues"
   },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "browserify exports.js > dist/threebox.js",
-    "dev": "watchify exports.js --verbose -o dist/threebox.js",
-    "test": "browserify tests/threebox-tests.js > tests/threebox-tests-bundle.js; echo 'Open tests/threebox-tests.html to run tests in the browser.'"
+    "build": "tsc"
   },
   "dependencies": {
+    "mapbox-gl": "^0.45.0",
     "three": "^0.89.0"
   },
   "devDependencies": {
     "@types/geojson": "^7946.0.2",
-    "@types/mapbox-gl": "^0.44.2",
-    "@types/three": "^0.91.8",
-    "browserify": "^16.2.0",
-    "eslint": "^4.19.1",
-    "eslint-config-standard": "^11.0.0",
-    "eslint-plugin-import": "^2.12.0",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-promise": "^3.8.0",
-    "eslint-plugin-standard": "^3.1.0",
-    "tap-prettify": "0.0.2",
-    "tape": "^4.6.3"
+    "@types/mapbox-gl": "^0.44.4",
+    "@types/three": "^0.91.14",
+    "three": "^0.93.0",
+    "typescript": "^2.9.1"
   }
 }
