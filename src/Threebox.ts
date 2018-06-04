@@ -1,6 +1,17 @@
-import { WebGLRenderer, Scene, PerspectiveCamera, Group, Vector3, AmbientLight, DirectionalLight, Object3D, Matrix4 } from 'three';
-import { Map } from 'mapbox-gl';
-import { Projection } from './Projection';
+import { Map } from "mapbox-gl";
+import {
+    AmbientLight,
+    DirectionalLight,
+    Group,
+    Matrix4,
+    Object3D,
+    PerspectiveCamera,
+    Scene,
+    Vector3,
+    WebGLRenderer,
+} from "three";
+
+import { Projection } from "./Projection";
 
 export type PrivateMap = Map & { transform: any };
 export { Projection } from "./Projection";
@@ -22,12 +33,12 @@ export class Threebox {
         this._renderer.shadowMap.enabled = true;
 
         this._canvas = this._renderer.domElement;
-        this._canvas.style.position = 'relative';
-        this._canvas.style.pointerEvents = 'none';
+        this._canvas.style.position = "relative";
+        this._canvas.style.pointerEvents = "none";
         this._canvas.style.zIndex = (+(this._map.getCanvas().style.zIndex || 0) + 1).toString();
 
         this._map.getCanvasContainer().appendChild(this._canvas);
-        this._map.on('resize', () => this._onMapResize());
+        this._map.on("resize", () => this._onMapResize());
 
         this._world = new Group();
         this._world.position.x = this._world.position.y = Projection.WORLD_SIZE / 2;
@@ -55,7 +66,7 @@ export class Threebox {
 
     public update(timestamp: number) {
         this.updateOnce();
-        window.requestAnimationFrame((timestamp) => this.update(timestamp));
+        window.requestAnimationFrame((t) => this.update(t));
     }
 
     public addAtCoordinate(obj: Object3D, lnglat: number[] = [0, 0, 0]) {
@@ -82,11 +93,22 @@ export class Threebox {
         const halfFov = CAMERA_FOV / 2;
         const cameraToCenterDistance = 0.5 / Math.tan(halfFov) * this._map.transform.height;
         const groundAngle = Math.PI / 2 + this._map.transform._pitch;
-        const topHalfSurfaceDistance = Math.sin(halfFov) * cameraToCenterDistance / Math.sin(Math.PI - groundAngle - halfFov);
-        const furthestDistance = Math.cos(Math.PI / 2 - this._map.transform._pitch) * topHalfSurfaceDistance + cameraToCenterDistance;
+
+        const topHalfSurfaceDistance =
+            Math.sin(halfFov) * cameraToCenterDistance /
+            Math.sin(Math.PI - groundAngle - halfFov);
+
+        const furthestDistance =
+            Math.cos(Math.PI / 2 - this._map.transform._pitch) *
+            topHalfSurfaceDistance + cameraToCenterDistance;
+
         const farZ = furthestDistance * 1.01; // Add a bit extra to avoid precision problems
 
-        this._camera.projectionMatrix = this._makePerspectiveMatrix(CAMERA_FOV, this._map.transform.width / this._map.transform.height, 1, farZ);
+        this._camera.projectionMatrix = this._makePerspectiveMatrix(
+            CAMERA_FOV,
+            this._map.transform.width / this._map.transform.height,
+            1,
+            farZ);
 
         const cameraWorldMatrix = new Matrix4();
         const cameraTranslateZ = new Matrix4().makeTranslation(0, 0, cameraToCenterDistance);
@@ -122,9 +144,10 @@ export class Threebox {
     }
 
     private _makePerspectiveMatrix(fovy: number, aspect: number, near: number, far: number): Matrix4 {
-        var out = new Matrix4();
-        var f = 1.0 / Math.tan(fovy / 2),
-        nf = 1 / (near - far);
+        const out = new Matrix4();
+        const f = 1.0 / Math.tan(fovy / 2);
+        const nf = 1 / (near - far);
+
         out.elements[0] = f / aspect;
         out.elements[1] = 0;
         out.elements[2] = 0;

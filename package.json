@@ -24,6 +24,7 @@
     "@types/mapbox-gl": "^0.44.4",
     "@types/three": "^0.91.14",
     "three": "^0.89.0",
+    "tslint": "^5.10.0",
     "typescript": "^2.9.1"
   }
 }
