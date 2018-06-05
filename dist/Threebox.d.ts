@@ -1,16 +1,16 @@
-import { Object3D } from 'three';
-import { Map } from 'mapbox-gl';
+import { Map } from "mapbox-gl";
+import { Group, Object3D, Scene } from "three";
 export declare type PrivateMap = Map & {
     transform: any;
 };
 export { Projection } from "./Projection";
 export declare class Threebox {
+    readonly scene: Scene;
+    readonly world: Group;
     private _camera;
     private _map;
     private _renderer;
     private _canvas;
-    private _scene;
-    private _world;
     constructor(map: PrivateMap);
     render(): void;
     syncCamera(): void;
