@@ -18,12 +18,13 @@ export { Projection } from "./Projection";
 
 export class Threebox {
 
+    public readonly scene: Scene;
+    public readonly world: Group;
+
     private _camera: PerspectiveCamera;
     private _map: PrivateMap;
     private _renderer: WebGLRenderer;
     private _canvas: HTMLCanvasElement;
-    private _scene: Scene;
-    private _world: Group;
 
     constructor(map: PrivateMap) {
         this._map = map;
@@ -40,19 +41,19 @@ export class Threebox {
         this._map.getCanvasContainer().appendChild(this._canvas);
         this._map.on("resize", () => this._onMapResize());
 
-        this._world = new Group();
-        this._world.position.x = this._world.position.y = Projection.WORLD_SIZE / 2;
-        this._world.matrixAutoUpdate = false;
+        this.world = new Group();
+        this.world.position.x = this.world.position.y = Projection.WORLD_SIZE / 2;
+        this.world.matrixAutoUpdate = false;
 
         this._camera = new PerspectiveCamera();
         this._camera.matrixAutoUpdate = false;
 
-        this._scene = new Scene();
-        this._scene.add(this._world);
+        this.scene = new Scene();
+        this.scene.add(this.world);
     }
 
     public render() {
-        this._renderer.render(this._scene, this._camera);
+        this._renderer.render(this.scene, this._camera);
     }
 
     public syncCamera() {
@@ -70,22 +71,22 @@ export class Threebox {
     }
 
     public addAtCoordinate(obj: Object3D, lnglat: number[] = [0, 0, 0]) {
-        this._world.add(obj);
+        this.world.add(obj);
         obj.position.copy(Projection.projectToWorld(lnglat));
         return obj;
     }
 
     public remove(obj: Object3D) {
-        this._world.remove(obj);
+        this.world.remove(obj);
     }
 
     public setupDefaultLights() {
-        this._scene.add(new AmbientLight(0xCCCCCC));
+        this.scene.add(new AmbientLight(0xCCCCCC));
 
         const sunlight = new DirectionalLight(0xFFFFFF, 0.5);
         sunlight.position.set(0, 800, 1000);
         sunlight.matrixWorldNeedsUpdate = true;
-        this._world.add(sunlight);
+        this.world.add(sunlight);
     }
 
     private _updateCamera(): void {
@@ -135,8 +136,8 @@ export class Threebox {
         translateCenter.makeTranslation(Projection.WORLD_SIZE / 2, -Projection.WORLD_SIZE / 2, 0);
         translateMap.makeTranslation(-this._map.transform.x, this._map.transform.y, 0);
         rotateMap.makeRotationZ(Math.PI);
-        this._world.matrix = new Matrix4();
-        this._world.matrix
+        this.world.matrix = new Matrix4();
+        this.world.matrix
             .premultiply(rotateMap)
             .premultiply(translateCenter)
             .premultiply(scale)
