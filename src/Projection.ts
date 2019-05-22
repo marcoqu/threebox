@@ -8,6 +8,14 @@ export class Projection {
     static DEG2RAD = Math.PI / 180;
     static RAD2DEG = 180 / Math.PI;
     static EARTH_CIRCUMFERENCE = 40075000; // In meters
+
+    static zoomScale(zoom: number) {
+        return Math.pow(2, zoom);
+    }
+
+    static scaleZoom(scale: number) {
+        return Math.log(scale) / Math.LN2;
+    }
     
     static projectToWorld(coords: number[]) {
         const pixelsPerMeter = Projection.projectedUnitsPerMeter(coords[1]);

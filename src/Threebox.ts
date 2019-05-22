@@ -89,6 +89,22 @@ export class Threebox {
         this.world.add(sunlight);
     }
 
+    private _getCameraToCenterDistance(): number {
+        const halfFov = CAMERA_FOV / 2;
+        return 0.5 / Math.tan(halfFov) * this._map.transform.height;
+    }
+
+    public zoomToHeight(lat: number, zoom: number): number {
+        const pixelsPerMeter = Projection.projectedUnitsPerMeter(lat) * Projection.zoomScale(zoom);
+        return this._getCameraToCenterDistance() / pixelsPerMeter;
+    }
+
+    public heightToZoom(lat: number, height: number): number {
+        const pixelsPerMeter = this._getCameraToCenterDistance() / height;
+        const scale = pixelsPerMeter / Projection.projectedUnitsPerMeter(lat);
+        return Projection.scaleZoom(scale);
+    }
+
     private _updateCamera(): void {
         // Build a projection matrix, paralleling the code found in Mapbox GL JS
         const halfFov = CAMERA_FOV / 2;
