@@ -2,6 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const three_1 = require("three");
 class Projection {
+    static zoomScale(zoom) {
+        return Math.pow(2, zoom);
+    }
+    static scaleZoom(scale) {
+        return Math.log(scale) / Math.LN2;
+    }
     static projectToWorld(coords) {
         const pixelsPerMeter = Projection.projectedUnitsPerMeter(coords[1]);
         const height = coords[2] || 0;

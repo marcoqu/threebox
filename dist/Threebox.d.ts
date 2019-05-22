@@ -19,6 +19,9 @@ export declare class Threebox {
     addAtCoordinate(obj: Object3D, lnglat?: number[]): Object3D;
     remove(obj: Object3D): void;
     setupDefaultLights(): void;
+    private _getCameraToCenterDistance;
+    zoomToHeight(lat: number, zoom: number): number;
+    heightToZoom(lat: number, height: number): number;
     private _updateCamera;
     private _makePerspectiveMatrix;
     private _onMapResize;
