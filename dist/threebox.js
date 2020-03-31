@@ -5,28 +5,46 @@ const Projection_1 = require("./Projection");
 var Projection_2 = require("./Projection");
 exports.Projection = Projection_2.Projection;
 class Threebox {
-    constructor(map) {
+    constructor(map, glContext) {
         this._map = map;
-        this._renderer = new three_1.WebGLRenderer({ alpha: true, antialias: true });
-        this._renderer.setSize(this._map.transform.width, this._map.transform.height);
+        this._renderer = new three_1.WebGLRenderer({
+            alpha: true,
+            antialias: true,
+            canvas: map.getCanvas(),
+            context: glContext
+        });
         this._renderer.shadowMap.enabled = true;
-        this._canvas = this._renderer.domElement;
-        this._canvas.style.position = "relative";
-        this._canvas.style.pointerEvents = "none";
-        this._canvas.style.zIndex = (+(this._map.getCanvas().style.zIndex || 0) + 1).toString();
-        this._map.getCanvasContainer().appendChild(this._canvas);
-        this._map.on("resize", () => this._onMapResize());
+        this._renderer.autoClear = false;
         this.world = new three_1.Group();
         this.world.position.x = this.world.position.y = Projection_1.Projection.WORLD_SIZE / 2;
         this.world.matrixAutoUpdate = false;
-        this._camera = new three_1.PerspectiveCamera();
+        this._camera = new three_1.PerspectiveCamera(28, window.innerWidth / window.innerHeight, 0.000000000001, Infinity);
         this._camera.matrixAutoUpdate = false;
         this.scene = new three_1.Scene();
         this.scene.add(this.world);
     }
-    render() {
-        this._renderer.render(this.scene, this._camera);
+    setupCamera() {
+        var t = this._map.transform;
+        const halfFov = CAMERA_FOV / 2;
+        var cameraToCenterDistance = 0.5 / Math.tan(halfFov) * t.height;
+        const groundAngle = Math.PI / 2 + t._pitch;
+        this._translateCenter = new three_1.Matrix4().makeTranslation(Projection_1.Projection.WORLD_SIZE / 2, -Projection_1.Projection.WORLD_SIZE / 2, 0);
+        this._cameraToCenterDistance = cameraToCenterDistance;
+        this._cameraTranslateZ = new three_1.Matrix4().makeTranslation(0, 0, cameraToCenterDistance);
+        this._topHalfSurfaceDistance =
+            Math.sin(halfFov) * cameraToCenterDistance /
+                Math.sin(Math.PI - groundAngle - halfFov);
+        this._updateCamera();
     }
+    render() {
+        // if (this._map.repaint) this._map.repaint = false
+        this._renderer.state.reset();
+        this._renderer.render(this.scene, this._camera);
+        this._map.triggerRepaint();
+    }
+    // public repaint(): void {
+    //     this._map.repaint = true;
+    // }
     syncCamera() {
         this._updateCamera();
     }
@@ -67,41 +85,33 @@ class Threebox {
         return Projection_1.Projection.scaleZoom(scale);
     }
     _updateCamera() {
-        // Build a projection matrix, paralleling the code found in Mapbox GL JS
-        const halfFov = CAMERA_FOV / 2;
-        const cameraToCenterDistance = 0.5 / Math.tan(halfFov) * this._map.transform.height;
-        const groundAngle = Math.PI / 2 + this._map.transform._pitch;
-        const topHalfSurfaceDistance = Math.sin(halfFov) * cameraToCenterDistance /
-            Math.sin(Math.PI - groundAngle - halfFov);
-        const furthestDistance = Math.cos(Math.PI / 2 - this._map.transform._pitch) *
-            topHalfSurfaceDistance + cameraToCenterDistance;
+        const tr = this._map.transform;
+        const furthestDistance = Math.cos(Math.PI / 2 - tr._pitch) *
+            this._topHalfSurfaceDistance + this._cameraToCenterDistance;
         const farZ = furthestDistance * 1.01; // Add a bit extra to avoid precision problems
-        this._camera.projectionMatrix = this._makePerspectiveMatrix(CAMERA_FOV, this._map.transform.width / this._map.transform.height, 1, farZ);
+        this._camera.projectionMatrix = this._makePerspectiveMatrix(CAMERA_FOV, tr.width / tr.height, 1, farZ);
         const cameraWorldMatrix = new three_1.Matrix4();
-        const cameraTranslateZ = new three_1.Matrix4().makeTranslation(0, 0, cameraToCenterDistance);
-        const cameraRotateX = new three_1.Matrix4().makeRotationX(this._map.transform._pitch);
-        const cameraRotateZ = new three_1.Matrix4().makeRotationZ(this._map.transform.angle);
+        const cameraRotatePitch = new three_1.Matrix4().makeRotationX(tr._pitch);
+        const cameraRotateBearing = new three_1.Matrix4().makeRotationZ(tr.angle);
         // Unlike the Mapbox GL JS camera, separate camera translation and rotation out into its world matrix
         // If this is applied directly to the projection matrix, it will work OK but break raycasting
         cameraWorldMatrix
-            .premultiply(cameraTranslateZ)
-            .premultiply(cameraRotateX)
-            .premultiply(cameraRotateZ);
+            .premultiply(this._cameraTranslateZ)
+            .premultiply(cameraRotatePitch)
+            .premultiply(cameraRotateBearing);
         this._camera.matrixWorld.copy(cameraWorldMatrix);
-        const zoomPow = this._map.transform.scale;
+        const zoomPow = tr.scale * 512 / Projection_1.Projection.WORLD_SIZE;
         // Handle scaling and translation of objects in the map in the world's matrix transform, not the camera
         const scale = new three_1.Matrix4();
-        const translateCenter = new three_1.Matrix4();
         const translateMap = new three_1.Matrix4();
         const rotateMap = new three_1.Matrix4();
         scale.makeScale(zoomPow, zoomPow, zoomPow);
-        translateCenter.makeTranslation(Projection_1.Projection.WORLD_SIZE / 2, -Projection_1.Projection.WORLD_SIZE / 2, 0);
-        translateMap.makeTranslation(-this._map.transform.x, this._map.transform.y, 0);
+        translateMap.makeTranslation(-tr.x, tr.y, 0);
         rotateMap.makeRotationZ(Math.PI);
         this.world.matrix = new three_1.Matrix4();
         this.world.matrix
             .premultiply(rotateMap)
-            .premultiply(translateCenter)
+            .premultiply(this._translateCenter)
             .premultiply(scale)
             .premultiply(translateMap);
         this._camera.projectionMatrixInverse.getInverse(this._camera.projectionMatrix);
@@ -127,9 +137,6 @@ class Threebox {
         out.elements[14] = (2 * far * near) * nf;
         out.elements[15] = 0;
         return out;
-    }
-    _onMapResize() {
-        this._renderer.setSize(this._map.transform.width, this._map.transform.height);
     }
 }
 exports.Threebox = Threebox;

@@ -37,7 +37,7 @@ class Projection {
     ;
 }
 exports.Projection = Projection;
-Projection.WORLD_SIZE = 512;
+Projection.WORLD_SIZE = 1024000;
 Projection.MERCATOR_A = 6378137.0; // 900913 projection property
 Projection.PROJECTION_WORLD_SIZE = Projection.WORLD_SIZE / (Projection.MERCATOR_A * Math.PI) / 2;
 Projection.DEG2RAD = Math.PI / 180;

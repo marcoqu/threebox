@@ -10,8 +10,12 @@ export declare class Threebox {
     private _camera;
     private _map;
     private _renderer;
-    private _canvas;
-    constructor(map: PrivateMap);
+    private _cameraToCenterDistance;
+    private _cameraTranslateZ;
+    private _topHalfSurfaceDistance;
+    private _translateCenter;
+    constructor(map: PrivateMap, glContext: WebGLRenderingContext);
+    setupCamera(): void;
     render(): void;
     syncCamera(): void;
     updateOnce(): void;
@@ -24,5 +28,4 @@ export declare class Threebox {
     heightToZoom(lat: number, height: number): number;
     private _updateCamera;
     private _makePerspectiveMatrix;
-    private _onMapResize;
 }

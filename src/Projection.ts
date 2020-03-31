@@ -2,7 +2,7 @@ import { Vector3 } from 'three';
 
 export class Projection {
 
-    static WORLD_SIZE = 512;
+    static WORLD_SIZE = 1024000;
     static MERCATOR_A = 6378137.0; // 900913 projection property
     static PROJECTION_WORLD_SIZE = Projection.WORLD_SIZE / (Projection.MERCATOR_A * Math.PI) / 2;
     static DEG2RAD = Math.PI / 180;
