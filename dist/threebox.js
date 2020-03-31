@@ -22,8 +22,9 @@ class Threebox {
         this._camera.matrixAutoUpdate = false;
         this.scene = new three_1.Scene();
         this.scene.add(this.world);
+        this._setupCamera();
     }
-    setupCamera() {
+    _setupCamera() {
         var t = this._map.transform;
         const halfFov = CAMERA_FOV / 2;
         var cameraToCenterDistance = 0.5 / Math.tan(halfFov) * t.height;

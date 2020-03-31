@@ -15,7 +15,7 @@ export declare class Threebox {
     private _topHalfSurfaceDistance;
     private _translateCenter;
     constructor(map: PrivateMap, glContext: WebGLRenderingContext);
-    setupCamera(): void;
+    _setupCamera(): void;
     render(): void;
     syncCamera(): void;
     updateOnce(): void;

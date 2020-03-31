@@ -51,9 +51,10 @@ export class Threebox {
 
         this.scene = new Scene();
         this.scene.add(this.world);
+        this._setupCamera()
     }
 
-    public setupCamera() {
+    public _setupCamera() {
         var t = this._map.transform
         const halfFov = CAMERA_FOV / 2;
         var cameraToCenterDistance = 0.5 / Math.tan(halfFov) * t.height;
