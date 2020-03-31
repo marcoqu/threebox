@@ -36,10 +36,10 @@ class Projection {
     }
     ;
 }
+exports.Projection = Projection;
 Projection.WORLD_SIZE = 512;
 Projection.MERCATOR_A = 6378137.0; // 900913 projection property
 Projection.PROJECTION_WORLD_SIZE = Projection.WORLD_SIZE / (Projection.MERCATOR_A * Math.PI) / 2;
 Projection.DEG2RAD = Math.PI / 180;
 Projection.RAD2DEG = 180 / Math.PI;
 Projection.EARTH_CIRCUMFERENCE = 40075000; // In meters
-exports.Projection = Projection;

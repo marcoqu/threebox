@@ -158,6 +158,8 @@ export class Threebox {
             .premultiply(translateCenter)
             .premultiply(scale)
             .premultiply(translateMap);
+
+        this._camera.projectionMatrixInverse.getInverse(this._camera.projectionMatrix);
     }
 
     private _makePerspectiveMatrix(fovy: number, aspect: number, near: number, far: number): Matrix4 {

@@ -104,6 +104,7 @@ class Threebox {
             .premultiply(translateCenter)
             .premultiply(scale)
             .premultiply(translateMap);
+        this._camera.projectionMatrixInverse.getInverse(this._camera.projectionMatrix);
     }
     _makePerspectiveMatrix(fovy, aspect, near, far) {
         const out = new three_1.Matrix4();
