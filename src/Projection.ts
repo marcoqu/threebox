@@ -2,6 +2,7 @@ import { Vector3 } from 'three';
 
 export class Projection {
 
+    static TILE_SIZE = 512;
     static WORLD_SIZE = 1024000;
     static MERCATOR_A = 6378137.0; // 900913 projection property
     static PROJECTION_WORLD_SIZE = Projection.WORLD_SIZE / (Projection.MERCATOR_A * Math.PI) / 2;
@@ -9,11 +10,11 @@ export class Projection {
     static RAD2DEG = 180 / Math.PI;
     static EARTH_CIRCUMFERENCE = 40075000; // In meters
 
-    static zoomScale(zoom: number) {
+    static zoomToScale(zoom: number) {
         return Math.pow(2, zoom);
     }
 
-    static scaleZoom(scale: number) {
+    static scaleToZoom(scale: number) {
         return Math.log(scale) / Math.LN2;
     }
     

@@ -70,15 +70,10 @@ export class Threebox {
     }
 
     public render() {
-        // if (this._map.repaint) this._map.repaint = false
         this._renderer.state.reset();
         this._renderer.render(this.scene, this._camera);
         this._map.triggerRepaint();
     }
-
-    // public repaint(): void {
-    //     this._map.repaint = true;
-    // }
 
     public syncCamera() {
         this._updateCamera();
@@ -124,14 +119,15 @@ export class Threebox {
     }
 
     public zoomToHeight(lat: number, zoom: number): number {
-        const pixelsPerMeter = Projection.projectedUnitsPerMeter(lat) * Projection.zoomScale(zoom);
+        const scale = Projection.zoomToScale(zoom) * (Projection.TILE_SIZE / Projection.WORLD_SIZE);
+        const pixelsPerMeter = Projection.projectedUnitsPerMeter(lat) * scale;
         return this._cameraToCenterDistance / pixelsPerMeter;
     }
 
     public heightToZoom(lat: number, height: number): number {
         const pixelsPerMeter = this._cameraToCenterDistance / height;
-        const scale = pixelsPerMeter / Projection.projectedUnitsPerMeter(lat);
-        return Projection.scaleZoom(scale);
+        const scale = (pixelsPerMeter / Projection.projectedUnitsPerMeter(lat)) / (Projection.TILE_SIZE / Projection.WORLD_SIZE);
+        return Projection.scaleToZoom(scale);
     }
 
     private _updateCamera(): void {
@@ -157,7 +153,7 @@ export class Threebox {
 
         this._camera.matrixWorld.copy(cameraWorldMatrix);
 
-        const zoomPow = tr.scale * 512/Projection.WORLD_SIZE;
+        const zoomPow = tr.scale * Projection.TILE_SIZE / Projection.WORLD_SIZE;
 
         // Handle scaling and translation of objects in the map in the world's matrix transform, not the camera
         const scale = new Matrix4();
