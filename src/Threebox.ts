@@ -1,4 +1,4 @@
-import { Map } from "mapbox-gl";
+import { Map, MercatorCoordinate } from "mapbox-gl";
 import {
     AmbientLight,
     DirectionalLight,
@@ -7,7 +7,6 @@ import {
     Object3D,
     PerspectiveCamera,
     Scene,
-    Vector3,
     WebGLRenderer,
 } from "three";
 
@@ -114,18 +113,23 @@ export class Threebox {
         this.world.add(sunlight);
     }
 
-    private _getCameraToCenterDistance(): number {
-        const halfFov = CAMERA_FOV / 2;
-        return 0.5 / Math.tan(halfFov) * this._map.transform.height;
+    public metersToMercatorUnit(meters: number, lat: number): number {
+        const coord = MercatorCoordinate.fromLngLat([0, lat]);
+        return meters * coord.meterInMercatorCoordinateUnits();
+    }
+
+    public mercatorUnitToMeters(units: number, lat: number): number {
+        const coord = MercatorCoordinate.fromLngLat([0, lat]);
+        return units / coord.meterInMercatorCoordinateUnits();
     }
 
     public zoomToHeight(lat: number, zoom: number): number {
         const pixelsPerMeter = Projection.projectedUnitsPerMeter(lat) * Projection.zoomScale(zoom);
-        return this._getCameraToCenterDistance() / pixelsPerMeter;
+        return this._cameraToCenterDistance / pixelsPerMeter;
     }
 
     public heightToZoom(lat: number, height: number): number {
-        const pixelsPerMeter = this._getCameraToCenterDistance() / height;
+        const pixelsPerMeter = this._cameraToCenterDistance / height;
         const scale = pixelsPerMeter / Projection.projectedUnitsPerMeter(lat);
         return Projection.scaleZoom(scale);
     }
@@ -161,7 +165,7 @@ export class Threebox {
         const rotateMap = new Matrix4();
 
         scale.makeScale(zoomPow, zoomPow, zoomPow);
-        translateMap.makeTranslation(-tr.x, tr.y, 0);
+        translateMap.makeTranslation(-tr.point.x, tr.point.y, 0);
         rotateMap.makeRotationZ(Math.PI);
         this.world.matrix = new Matrix4();
         this.world.matrix
@@ -170,7 +174,7 @@ export class Threebox {
             .premultiply(scale)
             .premultiply(translateMap);
 
-        this._camera.projectionMatrixInverse.getInverse(this._camera.projectionMatrix);
+        // this._camera.projectionMatrixInverse.getInverse(this._camera.projectionMatrix);
     }
 
     private _makePerspectiveMatrix(fovy: number, aspect: number, near: number, far: number): Matrix4 {

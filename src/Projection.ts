@@ -45,7 +45,7 @@ export class Projection {
     };
     
     static projectedUnitsPerMeter(latitude: number) {
-        return Math.abs(Projection.WORLD_SIZE * (1 / Math.cos(latitude * Math.PI / 180)) / Projection.EARTH_CIRCUMFERENCE);
+        return Math.abs(Projection.WORLD_SIZE * (1 / Math.cos(latitude * Projection.DEG2RAD)) / Projection.EARTH_CIRCUMFERENCE);
     };
 
 }
