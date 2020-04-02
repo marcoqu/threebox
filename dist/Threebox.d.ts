@@ -23,7 +23,8 @@ export declare class Threebox {
     addAtCoordinate(obj: Object3D, lnglat?: number[]): Object3D;
     remove(obj: Object3D): void;
     setupDefaultLights(): void;
-    private _getCameraToCenterDistance;
+    metersToMercatorUnit(meters: number, lat: number): number;
+    mercatorUnitToMeters(units: number, lat: number): number;
     zoomToHeight(lat: number, zoom: number): number;
     heightToZoom(lat: number, height: number): number;
     private _updateCamera;
