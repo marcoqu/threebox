@@ -8,7 +8,7 @@ class Projection {
     static scaleToZoom(scale) {
         return Math.log(scale) / Math.LN2;
     }
-    static projectToWorld(coords) {
+    static coordsToVector3(coords) {
         const pixelsPerMeter = Projection.projectedUnitsPerMeter(coords[1]);
         const height = coords[2] || 0;
         // Spherical mercator forward projection, re-scaling to WORLD_SIZE
@@ -20,7 +20,7 @@ class Projection {
         return new three_1.Vector3(projected[0], projected[1], projected[2]);
     }
     ;
-    static unprojectFromWorld(pixel) {
+    static vector3ToCoords(pixel) {
         const unprojected = [
             -pixel.x / (Projection.MERCATOR_A * Projection.DEG2RAD * Projection.PROJECTION_WORLD_SIZE),
             2 * (Math.atan(Math.exp(pixel.y / (Projection.PROJECTION_WORLD_SIZE * (-Projection.MERCATOR_A)))) - Math.PI / 4) / Projection.DEG2RAD

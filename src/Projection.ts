@@ -18,7 +18,7 @@ export class Projection {
         return Math.log(scale) / Math.LN2;
     }
     
-    static projectToWorld(coords: number[]) {
+    static coordsToVector3(coords: number[]) {
         const pixelsPerMeter = Projection.projectedUnitsPerMeter(coords[1]);
         const height = coords[2] || 0;
     
@@ -32,7 +32,7 @@ export class Projection {
         return new Vector3(projected[0], projected[1], projected[2]);
     };
     
-    static unprojectFromWorld(pixel: Vector3) {
+    static vector3ToCoords(pixel: Vector3) {
         const unprojected = [
             -pixel.x / (Projection.MERCATOR_A * Projection.DEG2RAD * Projection.PROJECTION_WORLD_SIZE),
             2 * (Math.atan(Math.exp(pixel.y / (Projection.PROJECTION_WORLD_SIZE * (-Projection.MERCATOR_A)))) - Math.PI / 4) / Projection.DEG2RAD

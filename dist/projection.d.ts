@@ -9,7 +9,7 @@ export declare class Projection {
     static EARTH_CIRCUMFERENCE: number;
     static zoomToScale(zoom: number): number;
     static scaleToZoom(scale: number): number;
-    static projectToWorld(coords: number[]): Vector3;
-    static unprojectFromWorld(pixel: Vector3): number[];
+    static coordsToVector3(coords: number[]): Vector3;
+    static vector3ToCoords(pixel: Vector3): number[];
     static projectedUnitsPerMeter(latitude: number): number;
 }

@@ -1,5 +1,5 @@
-import { Map } from "mapbox-gl";
-import { Group, Object3D, Scene } from "three";
+import { CameraOptions, Map } from "mapbox-gl";
+import { Euler, Group, Object3D, Scene, Vector3 } from "three";
 export declare type PrivateMap = Map & {
     transform: any;
 };
@@ -25,8 +25,9 @@ export declare class Threebox {
     setupDefaultLights(): void;
     metersToMercatorUnit(meters: number, lat: number): number;
     mercatorUnitToMeters(units: number, lat: number): number;
-    zoomToHeight(lat: number, zoom: number): number;
-    heightToZoom(lat: number, height: number): number;
+    zoomToAltitude(lat: number, zoom: number): number;
+    altitudeToZoom(lat: number, height: number): number;
+    cameraToVector3AndEuler(pos: CameraOptions): [Vector3, Euler];
     private _updateCamera;
     private _makePerspectiveMatrix;
 }

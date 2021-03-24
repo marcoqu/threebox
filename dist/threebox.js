@@ -56,7 +56,7 @@ class Threebox {
     }
     addAtCoordinate(obj, lnglat = [0, 0, 0]) {
         this.world.add(obj);
-        obj.position.copy(Projection_1.Projection.projectToWorld(lnglat));
+        obj.position.copy(Projection_1.Projection.coordsToVector3(lnglat));
         return obj;
     }
     remove(obj) {
@@ -77,15 +77,30 @@ class Threebox {
         const coord = mapbox_gl_1.MercatorCoordinate.fromLngLat([0, lat]);
         return units / coord.meterInMercatorCoordinateUnits();
     }
-    zoomToHeight(lat, zoom) {
+    zoomToAltitude(lat, zoom) {
         const scale = Projection_1.Projection.zoomToScale(zoom) * (Projection_1.Projection.TILE_SIZE / Projection_1.Projection.WORLD_SIZE);
         const pixelsPerMeter = Projection_1.Projection.projectedUnitsPerMeter(lat) * scale;
         return this._cameraToCenterDistance / pixelsPerMeter;
     }
-    heightToZoom(lat, height) {
+    altitudeToZoom(lat, height) {
         const pixelsPerMeter = this._cameraToCenterDistance / height;
         const scale = (pixelsPerMeter / Projection_1.Projection.projectedUnitsPerMeter(lat)) / (Projection_1.Projection.TILE_SIZE / Projection_1.Projection.WORLD_SIZE);
         return Projection_1.Projection.scaleToZoom(scale);
+    }
+    cameraToVector3AndEuler(pos) {
+        if (!pos.center || !pos.zoom)
+            throw new Error("Camera must have a center and a zoom position");
+        if (!this._map)
+            throw new Error("Layer must be added to the map");
+        const c = mapbox_gl_1.LngLat.convert(pos.center);
+        const p = (pos.pitch || 0) * Projection_1.Projection.DEG2RAD;
+        const b = (pos.bearing || 0) * Projection_1.Projection.DEG2RAD;
+        const position = [c.lng, c.lat, this.zoomToAltitude(c.lat, pos.zoom)];
+        const projected = Projection_1.Projection.coordsToVector3(position);
+        projected.x += projected.z * Math.sin(-p) * Math.sin(b);
+        projected.y += projected.z * Math.sin(-p) * Math.cos(b);
+        projected.z = projected.z * Math.cos(-p);
+        return [projected, new three_1.Euler(p, 0, b)];
     }
     _updateCamera() {
         const tr = this._map.transform;

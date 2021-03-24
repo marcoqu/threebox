@@ -1,12 +1,14 @@
-import { Map, MercatorCoordinate } from "mapbox-gl";
+import { CameraOptions, LngLat, Map, MercatorCoordinate } from "mapbox-gl";
 import {
     AmbientLight,
     DirectionalLight,
+    Euler,
     Group,
     Matrix4,
     Object3D,
     PerspectiveCamera,
     Scene,
+    Vector3,
     WebGLRenderer,
 } from "three";
 
@@ -91,7 +93,7 @@ export class Threebox {
 
     public addAtCoordinate(obj: Object3D, lnglat: number[] = [0, 0, 0]) {
         this.world.add(obj);
-        obj.position.copy(Projection.projectToWorld(lnglat));
+        obj.position.copy(Projection.coordsToVector3(lnglat));
         return obj;
     }
 
@@ -118,17 +120,32 @@ export class Threebox {
         return units / coord.meterInMercatorCoordinateUnits();
     }
 
-    public zoomToHeight(lat: number, zoom: number): number {
+    public zoomToAltitude(lat: number, zoom: number): number {
         const scale = Projection.zoomToScale(zoom) * (Projection.TILE_SIZE / Projection.WORLD_SIZE);
         const pixelsPerMeter = Projection.projectedUnitsPerMeter(lat) * scale;
         return this._cameraToCenterDistance / pixelsPerMeter;
     }
 
-    public heightToZoom(lat: number, height: number): number {
+    public altitudeToZoom(lat: number, height: number): number {
         const pixelsPerMeter = this._cameraToCenterDistance / height;
         const scale = (pixelsPerMeter / Projection.projectedUnitsPerMeter(lat)) / (Projection.TILE_SIZE / Projection.WORLD_SIZE);
         return Projection.scaleToZoom(scale);
     }
+
+    public cameraToVector3AndEuler(pos: CameraOptions): [Vector3, Euler] {
+        if (!pos.center || !pos.zoom) throw new Error("Camera must have a center and a zoom position");
+        if (!this._map) throw new Error("Layer must be added to the map");
+        const c = LngLat.convert(pos.center);
+        const p = (pos.pitch || 0) * Projection.DEG2RAD;
+        const b = (pos.bearing || 0) * Projection.DEG2RAD;
+        const position = [c.lng, c.lat, this.zoomToAltitude(c.lat, pos.zoom)] as [number, number, number];
+        const projected = Projection.coordsToVector3(position);
+        projected.x += projected.z * Math.sin(-p) * Math.sin(b);
+        projected.y += projected.z * Math.sin(-p) * Math.cos(b);
+        projected.z = projected.z * Math.cos(-p);
+        return [projected, new Euler(p, 0, b)];
+    }
+    
 
     private _updateCamera(): void {
         const tr = this._map.transform
