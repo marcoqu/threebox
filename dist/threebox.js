@@ -39,14 +39,10 @@ class Threebox {
         this._updateCamera();
     }
     render() {
-        // if (this._map.repaint) this._map.repaint = false
         this._renderer.state.reset();
         this._renderer.render(this.scene, this._camera);
         this._map.triggerRepaint();
     }
-    // public repaint(): void {
-    //     this._map.repaint = true;
-    // }
     syncCamera() {
         this._updateCamera();
     }
@@ -82,13 +78,14 @@ class Threebox {
         return units / coord.meterInMercatorCoordinateUnits();
     }
     zoomToHeight(lat, zoom) {
-        const pixelsPerMeter = Projection_1.Projection.projectedUnitsPerMeter(lat) * Projection_1.Projection.zoomScale(zoom);
+        const scale = Projection_1.Projection.zoomToScale(zoom) * (Projection_1.Projection.TILE_SIZE / Projection_1.Projection.WORLD_SIZE);
+        const pixelsPerMeter = Projection_1.Projection.projectedUnitsPerMeter(lat) * scale;
         return this._cameraToCenterDistance / pixelsPerMeter;
     }
     heightToZoom(lat, height) {
         const pixelsPerMeter = this._cameraToCenterDistance / height;
-        const scale = pixelsPerMeter / Projection_1.Projection.projectedUnitsPerMeter(lat);
-        return Projection_1.Projection.scaleZoom(scale);
+        const scale = (pixelsPerMeter / Projection_1.Projection.projectedUnitsPerMeter(lat)) / (Projection_1.Projection.TILE_SIZE / Projection_1.Projection.WORLD_SIZE);
+        return Projection_1.Projection.scaleToZoom(scale);
     }
     _updateCamera() {
         const tr = this._map.transform;
@@ -106,7 +103,7 @@ class Threebox {
             .premultiply(cameraRotatePitch)
             .premultiply(cameraRotateBearing);
         this._camera.matrixWorld.copy(cameraWorldMatrix);
-        const zoomPow = tr.scale * 512 / Projection_1.Projection.WORLD_SIZE;
+        const zoomPow = tr.scale * Projection_1.Projection.TILE_SIZE / Projection_1.Projection.WORLD_SIZE;
         // Handle scaling and translation of objects in the map in the world's matrix transform, not the camera
         const scale = new three_1.Matrix4();
         const translateMap = new three_1.Matrix4();

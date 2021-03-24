@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const three_1 = require("three");
 class Projection {
-    static zoomScale(zoom) {
+    static zoomToScale(zoom) {
         return Math.pow(2, zoom);
     }
-    static scaleZoom(scale) {
+    static scaleToZoom(scale) {
         return Math.log(scale) / Math.LN2;
     }
     static projectToWorld(coords) {
@@ -37,6 +37,7 @@ class Projection {
     ;
 }
 exports.Projection = Projection;
+Projection.TILE_SIZE = 512;
 Projection.WORLD_SIZE = 1024000;
 Projection.MERCATOR_A = 6378137.0; // 900913 projection property
 Projection.PROJECTION_WORLD_SIZE = Projection.WORLD_SIZE / (Projection.MERCATOR_A * Math.PI) / 2;
