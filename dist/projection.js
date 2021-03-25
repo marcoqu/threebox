@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Projection = void 0;
 const three_1 = require("three");
 class Projection {
     static zoomToScale(zoom) {

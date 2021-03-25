@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Threebox = void 0;
 const mapbox_gl_1 = require("mapbox-gl");
 const three_1 = require("three");
 const Projection_1 = require("./Projection");
 var Projection_2 = require("./Projection");
-exports.Projection = Projection_2.Projection;
+Object.defineProperty(exports, "Projection", { enumerable: true, get: function () { return Projection_2.Projection; } });
 class Threebox {
     constructor(map, glContext) {
         this._map = map;

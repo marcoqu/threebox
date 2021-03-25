@@ -38,7 +38,7 @@ export class Threebox {
             antialias: true,
             canvas: map.getCanvas(),
             context: glContext
-        });
+        } as any);
 
         this._renderer.shadowMap.enabled = true;
         this._renderer.autoClear = false;
